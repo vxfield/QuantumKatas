@@ -378,7 +378,7 @@ namespace Quantum.Kata.Measurements {
         SWAP(qs[0], qs[1]);
 
         // Apply diag(..) (H ⊗ H) diag(..)
-        With(ApplyDiag, ApplyToEach(H, _), qs);
+        ApplyWith(ApplyDiag, ApplyToEach(H, _), qs);
         return BasisStateMeasurement_Reference(qs);
     }
 
