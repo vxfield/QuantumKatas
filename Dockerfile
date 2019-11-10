@@ -39,11 +39,8 @@ RUN ${HOME}/scripts/prebuild-kata.sh SuperdenseCoding
 RUN ${HOME}/scripts/prebuild-kata.sh Superposition
 RUN ${HOME}/scripts/prebuild-kata.sh Teleportation
 RUN ${HOME}/scripts/prebuild-kata.sh UnitaryPatterns
-RUN ${HOME}/scripts/prebuild-kata.sh tutorials/ComplexArithmetic ComplexArithmetic.ipynb
 RUN ${HOME}/scripts/prebuild-kata.sh tutorials/ExploringDeutschJozsaAlgorithm DeutschJozsaAlgorithmTutorial.ipynb
 RUN ${HOME}/scripts/prebuild-kata.sh tutorials/ExploringGroversAlgorithm ExploringGroversAlgorithmTutorial.ipynb
-RUN ${HOME}/scripts/prebuild-kata.sh tutorials/LinearAlgebra LinearAlgebra.ipynb
 RUN ${HOME}/scripts/prebuild-kata.sh tutorials/MultiQubitGates MultiQubitGates.ipynb
 RUN ${HOME}/scripts/prebuild-kata.sh tutorials/MultiQubitSystems MultiQubitSystems.ipynb
-RUN ${HOME}/scripts/prebuild-kata.sh tutorials/Qubit Qubit.ipynb
 RUN ${HOME}/scripts/prebuild-kata.sh tutorials/SingleQubitGates SingleQubitGates.ipynb
