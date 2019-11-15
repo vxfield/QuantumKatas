@@ -90,8 +90,7 @@ namespace Microsoft.Quantum.Katas
                 // Gets the names of all the operations found for this snippet
                 var opsNames =
                     result
-                        .Where(e => e.IsQsCallable)
-                        .Select(e => e.ToFullName().WithoutNamespace(Microsoft.Quantum.IQSharp.Snippets.SNIPPETS_NAMESPACE))
+                        .Select(e => e.ToFullName().WithoutNamespace(Snippets.SNIPPETS_NAMESPACE))
                         .OrderBy(o => o)
                         .ToArray();
 
