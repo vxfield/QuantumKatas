@@ -1,6 +1,6 @@
-FROM alpine:3.11.3
+FROM alpine:latest
 
-ARG QSHARP_VERSION=0.10.1911.1607
+ARG QSHARP_VERSION=0.11.2003.3107
 ARG JUPYTER_PORT=8888
 ARG NB_USER="jovyan"
 ARG NB_UID="1000"
@@ -45,24 +45,24 @@ RUN apk add --no-cache \
     #
         ca-certificates \
         bash \
-        git=2.24.1-r0 \
+        git \
     # The Quantum Simulator dependencies
-        libgomp=9.2.0-r3 \
+        libgomp \
     # .NET Core dependencies
-        krb5-libs=1.17.1-r0 \
-        libgcc=9.2.0-r3 \
-        libintl=0.20.1-r2 \
-        libssl1.1=1.1.1d-r3 \
-        libstdc++=9.2.0-r3 \
-        zlib=1.2.11-r3 \
+        krb5-libs \
+        libgcc \
+        libintl \
+        libssl1.1 \
+        libstdc++ \
+        zlib \
     # Add dependencies for disabling invariant mode (set in base image)
-        icu-libs=64.2-r0 \
+        icu-libs \
     # Python3 and dependencies
-        libpng=1.6.37-r1 \
-        freetype=2.10.1-r0 \
-        python3=3.8.1-r0 \
-        py2-pip=18.1-r0 \
-        libzmq=4.3.2-r0
+        libpng \
+        freetype \
+        python3 \
+        py2-pip \
+        libzmq
 
 # Install .NET Core SDK
 RUN dotnet_sdk_version=3.1.101 \
@@ -81,13 +81,13 @@ RUN dotnet_sdk_version=3.1.101 \
 RUN \
     # Add some temporary packages for pip builds
         apk add --update --no-cache --virtual .build-tmp \
-            gcc=9.2.0-r3 \
-       	    build-base=0.5-r1 \
-            python3-dev=3.8.1-r0 \
-       	    libpng-dev=1.6.37-r1 \
-       	    musl-dev=1.1.24-r0 \
-       	    freetype-dev=2.10.1-r0 \
-            zeromq-dev=4.3.2-r0 && \
+            gcc \
+       	    build-base \
+            python3-dev \
+       	    libpng-dev \
+       	    musl-dev \
+       	    freetype-dev \
+            zeromq-dev && \
     # Install Python packages
         pip3 install --upgrade pip setuptools wheel && \
         pip3 install -I \
@@ -114,39 +114,42 @@ USER $NB_UID
 RUN dotnet tool install --no-cache -g Microsoft.Quantum.IQSharp --version $QSHARP_VERSION && \
     $HOME/.dotnet/tools/dotnet-iqsharp install --user
 
-COPY ./prebuild-kata-jupyter.sh /home/jovyan/
-
 RUN cd $HOME && \
     git clone https://github.com/microsoft/QuantumKatas.git && \
-    cp prebuild-kata-jupyter.sh ./QuantumKatas/scripts/ && \
     cd QuantumKatas && \
     chmod +x ./scripts/*.sh && \
-    ./scripts/prebuild-kata-jupyter.sh BasicGates && \
-    ./scripts/prebuild-kata-jupyter.sh CHSHGame && \
-    ./scripts/prebuild-kata-jupyter.sh DeutschJozsaAlgorithm && \
-    ./scripts/prebuild-kata-jupyter.sh GHZGame && \
-    ./scripts/prebuild-kata-jupyter.sh GraphColoring && \
-    ./scripts/prebuild-kata-jupyter.sh GroversAlgorithm && \
-    ./scripts/prebuild-kata-jupyter.sh JointMeasurements && \
-    ./scripts/prebuild-kata-jupyter.sh KeyDistribution_BB84 && \
-    ./scripts/prebuild-kata-jupyter.sh MagicSquareGame && \
-    ./scripts/prebuild-kata-jupyter.sh Measurements && \
-    ./scripts/prebuild-kata-jupyter.sh PhaseEstimation && \
-    ./scripts/prebuild-kata-jupyter.sh QEC_BitFlipCode && \
-    ./scripts/prebuild-kata-jupyter.sh RippleCarryAdder && \
-    ./scripts/prebuild-kata-jupyter.sh SolveSATWithGrover && \
-    ./scripts/prebuild-kata-jupyter.sh SuperdenseCoding && \
-    ./scripts/prebuild-kata-jupyter.sh Superposition && \
-    ./scripts/prebuild-kata-jupyter.sh Teleportation && \
-    ./scripts/prebuild-kata-jupyter.sh UnitaryPatterns && \
-    ./scripts/prebuild-kata-jupyter.sh tutorials/ComplexArithmetic ComplexArithmetic.ipynb && \
-    ./scripts/prebuild-kata-jupyter.sh tutorials/ExploringDeutschJozsaAlgorithm DeutschJozsaAlgorithmTutorial.ipynb && \
-    ./scripts/prebuild-kata-jupyter.sh tutorials/ExploringGroversAlgorithm ExploringGroversAlgorithmTutorial.ipynb && \
-    ./scripts/prebuild-kata-jupyter.sh tutorials/LinearAlgebra LinearAlgebra.ipynb && \
-    ./scripts/prebuild-kata-jupyter.sh tutorials/MultiQubitGates MultiQubitGates.ipynb && \
-    ./scripts/prebuild-kata-jupyter.sh tutorials/MultiQubitSystems MultiQubitSystems.ipynb && \
-    ./scripts/prebuild-kata-jupyter.sh tutorials/Qubit Qubit.ipynb && \
-    ./scripts/prebuild-kata-jupyter.sh tutorials/SingleQubitGates SingleQubitGates.ipynb
+    ./scripts/prebuild-kata.sh BasicGates && \
+    ./scripts/prebuild-kata.sh CHSHGame && \
+    ./scripts/prebuild-kata.sh DeutschJozsaAlgorithm && \
+    ./scripts/prebuild-kata.sh GHZGame && \
+    ./scripts/prebuild-kata.sh GraphColoring && \
+    ./scripts/prebuild-kata.sh GroversAlgorithm && \
+    ./scripts/prebuild-kata.sh JointMeasurements && \
+    ./scripts/prebuild-kata.sh KeyDistribution_BB84 && \
+    ./scripts/prebuild-kata.sh MagicSquareGame && \
+    ./scripts/prebuild-kata.sh Measurements && \
+    ./scripts/prebuild-kata.sh PhaseEstimation && \
+    ./scripts/prebuild-kata.sh QEC_BitFlipCode && \
+    ./scripts/prebuild-kata.sh RippleCarryAdder && \
+    ./scripts/prebuild-kata.sh SolveSATWithGrover && \
+    ./scripts/prebuild-kata.sh SuperdenseCoding && \
+    ./scripts/prebuild-kata.sh Superposition && \
+    ./scripts/prebuild-kata.sh Teleportation && \
+    ./scripts/prebuild-kata.sh UnitaryPatterns && \
+    ./scripts/prebuild-kata.sh tutorials/ComplexArithmetic ComplexArithmetic.ipynb && \
+    ./scripts/prebuild-kata.sh tutorials/ExploringDeutschJozsaAlgorithm DeutschJozsaAlgorithmTutorial.ipynb && \
+    ./scripts/prebuild-kata.sh tutorials/ExploringGroversAlgorithm ExploringGroversAlgorithmTutorial.ipynb && \
+    ./scripts/prebuild-kata.sh tutorials/LinearAlgebra LinearAlgebra.ipynb && \
+    ./scripts/prebuild-kata.sh tutorials/MultiQubitGates MultiQubitGates.ipynb && \
+    ./scripts/prebuild-kata.sh tutorials/MultiQubitSystems MultiQubitSystems.ipynb && \
+    ./scripts/prebuild-kata.sh tutorials/Qubit Qubit.ipynb && \
+    ./scripts/prebuild-kata.sh tutorials/SingleQubitGates SingleQubitGates.ipynb
 
 # USER root
 # USER $NB_UID
+
+RUN echo "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n\
+          <configuration>\n\
+              <packageSources/>\n\
+          </configuration>\n\
+    " > ${HOME}/.nuget/NuGet/NuGet.Config
