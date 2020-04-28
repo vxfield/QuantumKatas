@@ -117,6 +117,7 @@ RUN dotnet tool install --no-cache -g Microsoft.Quantum.IQSharp --version $QSHAR
 RUN cd $HOME && \
     git clone https://github.com/microsoft/QuantumKatas.git && \
     cd QuantumKatas && \
+    rm NuGet.config && \
     chmod +x ./scripts/*.sh && \
     ./scripts/prebuild-kata.sh BasicGates && \
     ./scripts/prebuild-kata.sh CHSHGame && \
@@ -145,11 +146,10 @@ RUN cd $HOME && \
     ./scripts/prebuild-kata.sh tutorials/Qubit Qubit.ipynb && \
     ./scripts/prebuild-kata.sh tutorials/SingleQubitGates SingleQubitGates.ipynb
 
-# USER root
-# USER $NB_UID
-
-RUN echo "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n\
-          <configuration>\n\
-              <packageSources/>\n\
-          </configuration>\n\
+RUN echo "<?xml version=\"1.0\" encoding=\"utf-8\"?>\
+          <configuration>\
+              <packageSources>\
+                   <clear />\
+              </packageSources>\
+          </configuration>\
     " > ${HOME}/.nuget/NuGet/NuGet.Config
