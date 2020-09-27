@@ -10,11 +10,18 @@
 
 namespace Quantum.Kata.QFT {
     
+    open Microsoft.Quantum.Measurement;
+    open Microsoft.Quantum.Arrays;
+    open Microsoft.Quantum.Arithmetic;
     open Microsoft.Quantum.Convert;
     open Microsoft.Quantum.Math;
     open Microsoft.Quantum.Diagnostics;
     open Microsoft.Quantum.Intrinsic;
     open Microsoft.Quantum.Canon;
+
+    //////////////////////////////////////////////////////////////////
+    // Part I. Implementing Quantum Fourier Transform
+    //////////////////////////////////////////////////////////////////
 
     // Task 1.1. 1-qubit QFT
     operation OneQubitQFT_Reference (q : Qubit) : Unit is Adj+Ctl {
@@ -78,7 +85,7 @@ namespace Quantum.Kata.QFT {
     // Input: A register of qubits in state |j₁j₂...jₙ⟩
     // Goal: Change the state of the register
     //       from |j₁⟩ ⊗ |j₂...jₙ⟩
-    //         to 1/sqrt(2) (|0⟩ + β · exp(2πi · 0.j₁j₂...jₙ) |1⟩) ⊗ |j₂...jₙ⟩.
+    //         to 1/sqrt(2) (|0⟩ + exp(2πi · 0.j₁j₂...jₙ) |1⟩) ⊗ |j₂...jₙ⟩.
     operation BinaryFractionQuantumInPlace_Reference (register : Qubit[]) : Unit is Adj+Ctl {
         OneQubitQFT_Reference(register[0]);
         for (ind in 1 .. Length(register) - 1) {
@@ -89,7 +96,7 @@ namespace Quantum.Kata.QFT {
 
     // Task 1.6. Reverse the order of qubits
     // Input: A register of qubits in state |x₁x₂...xₙ⟩
-    // Goal: Reverse the order of qubits, i.e., convert the state of the register to |xₙ...x₂x₁⟩
+    // Goal: Reverse the order of qubits, i.e., convert the state of the register to |xₙ...x₂x₁⟩.
     operation ReverseRegister_Reference (register : Qubit[]) : Unit is Adj+Ctl {
         let N = Length(register);
         for (ind in 0 .. N / 2 - 1) {
@@ -119,4 +126,76 @@ namespace Quantum.Kata.QFT {
         Adjoint QuantumFourierTransform_Reference(register);
     }
 
+
+    //////////////////////////////////////////////////////////////////
+    // Part II. Using the Quantum Fourier Transform
+    //////////////////////////////////////////////////////////////////
+
+    // Task 2.1. Prepare an equal superposition of all basis states
+    operation PrepareEqualSuperposition_Reference (register : Qubit[]) : Unit is Adj+Ctl {
+        // We get equal superposition of all basis states 
+        // if we apply QFT to the |0...0⟩ state
+        QFT(BigEndian(register));
+    }
+
+
+    // Task 2.2. Prepare a periodic state
+    // 1 / sqrt(2ⁿ) Σₖ exp(2πi Fk/2ⁿ) |k⟩
+    operation PreparePeriodicState_Reference (register : Qubit[], F : Int) : Unit is Adj+Ctl {
+        // Prepare state |F⟩ (in big endian notation)
+        // IntAsBoolArray gets bits in little endian notation, so need to reverse
+        let bitsBE = Reversed(IntAsBoolArray(F, Length(register)));
+        ApplyPauliFromBitString(PauliX, true, bitsBE, register);
+
+        QFT(BigEndian(register));
+    }
+    
+
+    // Task 2.3. Prepare a periodic state with alternating 1 and -1 amplitudes
+    // 1 / sqrt(2ⁿ) (|0⟩ - |1⟩ + |2⟩ - |3⟩ + ... - |2ⁿ-1⟩).
+    operation PrepareAlternatingState_Reference (register : Qubit[]) : Unit is Adj+Ctl {
+        // Prepare state |2ⁿ⁻¹⟩ = |10...0⟩
+        // which corresponds to 1 / sqrt(2ⁿ) Σₖ exp(2πi k/2) |k⟩, amplitudes +1 for even k and -1 for odd k
+        X(Head(register));
+
+        QFT(BigEndian(register));
+    }
+
+
+    // Task 2.4. Prepare an equal superposition of all even basis states
+    // 1/sqrt(2ⁿ⁻¹) (|0⟩ + |2⟩ + ... + |2ⁿ-2⟩).
+    operation PrepareEqualSuperpositionOfEvenStates_Reference (register : Qubit[]) : Unit is Adj+Ctl {
+        // Prepare superposition |0⟩ + |2ⁿ⁻¹⟩ = |0...00⟩ + |0..01⟩
+        H(Head(register));
+
+        QFT(BigEndian(register));
+    }
+
+
+    // Task 2.5*. Prepare a square-wave signal
+    // 1/sqrt(2ⁿ) (|0⟩ + |1⟩ - |2⟩ - |3⟩ + ... - |2ⁿ-2⟩ - |2ⁿ-1⟩).
+    operation PrepareSquareWaveSignal_Reference (register : Qubit[]) : Unit is Adj+Ctl {
+        // Following https://oreilly-qc.github.io?p=7-3
+        // Prepare superposition exp(-iπ/4)|2ⁿ⁻²⟩ + exp(iπ/4)|-2ⁿ⁻²⟩
+        let n = Length(register);
+        X(register[1]);
+        // |010...0⟩
+        H(register[0]);
+        // |010...0⟩ + |110...0⟩
+        T(register[0]);
+        within { X(register[0]); }
+        apply { Adjoint T(register[0]); }
+
+        QFT(BigEndian(register));
+    }
+
+
+    // Task 2.6. Get the frequency of a signal
+    // Input: A register of n ≥ 2 qubits in state 1/sqrt(2ⁿ) Σₖ exp(2πikF/2ⁿ) |k⟩, 0 ≤ F ≤ 2ⁿ - 1.
+    // Goal: Return the frequency F of the "signal" encoded in this state.
+    operation Frequency_Reference (register : Qubit[]) : Int {
+        Adjoint QFT(BigEndian(register));
+        let bitsBE = MultiM(register);
+        return ResultArrayAsInt(Reversed(bitsBE));
+    }
 }

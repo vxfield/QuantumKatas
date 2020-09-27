@@ -9,7 +9,7 @@ using the same basic components and the same algorithm.
 to reduce the number of ancillary qubits needed.
 * Finally, part IV covers building an in-place quantum subtractor.
 
-You can [run the RippleCarryAdder kata as a Jupyter Notebook](https://mybinder.org/v2/gh/Microsoft/QuantumKatas/master?filepath=RippleCarryAdder%2FRippleCarryAdder.ipynb)!
+You can [run the RippleCarryAdder kata as a Jupyter Notebook](https://mybinder.org/v2/gh/Microsoft/QuantumKatas/main?filepath=RippleCarryAdder%2FRippleCarryAdder.ipynb)!
 
 #### Theory
 
@@ -23,4 +23,4 @@ You can [run the RippleCarryAdder kata as a Jupyter Notebook](https://mybinder.o
 It is recommended to complete the [BasicGates kata](./../BasicGates/) before this one to get familiar with the basic gates used in quantum computing.
 The list of basic gates available in Q# can be found at [Microsoft.Quantum.Intrinsic](https://docs.microsoft.com/qsharp/api/qsharp/microsoft.quantum.intrinsic).
 
-For the syntax of flow control statements in Q#, see [the Q# documentation](https://docs.microsoft.com/quantum/language/statements#control-flow).
+For the syntax of flow control statements in Q#, see the [Q# user guide](https://docs.microsoft.com/en-us/quantum/user-guide/using-qsharp/control-flow#control-flow).
